@@ -19,17 +19,17 @@ Direct links to challenge and code for each day:
 + [Day 9](https://adventofcode.com/2022/day/9) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_9/day_9.py)
 + [Day 10](https://adventofcode.com/2022/day/10) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_10/day_10.py)
 + [Day 11](https://adventofcode.com/2022/day/11) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_11/day_11.py)
-+ Day 12
-+ Day 13
-+ Day 14
-+ Day 15
-+ Day 16
-+ Day 17
-+ Day 18
-+ Day 19
-+ Day 20
-+ Day 21
-+ Day 22
-+ Day 23
-+ Day 24
-+ Day 25
++ [Day 12](https://adventofcode.com/2022/day/12) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_12/day_12.py)
++ [Day 13](https://adventofcode.com/2022/day/13) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_13/day_13.py)
++ [Day 14](https://adventofcode.com/2022/day/14) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_14/day_14.py)
++ [Day 15](https://adventofcode.com/2022/day/15) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_15/day_15.py)
++ [Day 16](https://adventofcode.com/2022/day/16) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_16/day_16.py)
++ [Day 17](https://adventofcode.com/2022/day/17) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_17/day_17.py)
++ [Day 18](https://adventofcode.com/2022/day/18) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_18/day_18.py)
++ [Day 19](https://adventofcode.com/2022/day/19) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_19/day_19.py)
++ [Day 20](https://adventofcode.com/2022/day/20) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_20/day_20.py)
++ [Day 21](https://adventofcode.com/2022/day/21) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_21/day_21.py)
++ [Day 22](https://adventofcode.com/2022/day/22) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_22/day_22.py)
++ [Day 23](https://adventofcode.com/2022/day/23) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_23/day_23.py)
++ [Day 24](https://adventofcode.com/2022/day/24) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_24/day_24.py)
++ [Day 25](https://adventofcode.com/2022/day/25) [Code](https://github.com/kossick/adventofcode2022/blob/main/day_25/day_25.py)
