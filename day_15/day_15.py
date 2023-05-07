@@ -1,3 +1,9 @@
+"""
+Part 2 works for the input data, but not the test data!
+
+This would need a rewrite for that to work.
+"""
+
 from __future__ import annotations
 import argparse
 from dataclasses import dataclass
@@ -5,7 +11,7 @@ import pathlib
 import re
 import sys
 from time import perf_counter
-from typing import List, Self, Set
+from typing import List, Self, Set, Tuple
 
 CURRENT_PATH = pathlib.Path.cwd()
 PARSE_STRING = (
@@ -56,10 +62,10 @@ class Sensor(Point):
         return border
 
     def beaconless_on_line(self: Self, row: int) -> Set[Point]:
-        """Find the perimeter of the region without beacons for the sensor on a given line, 
+        """Find the perimeter of the region without beacons for the sensor on a given line,
 
         The beacon is excluded if on the line and the border is shifted accordingly, i.e. to the right if the beacon
-        was on the left of the border.       
+        was on the left of the border.    
         """
         height = abs(self.y - row)
         width = self.distance_from(self.nearest_beacon) - height
@@ -69,43 +75,24 @@ class Sensor(Point):
             if Point(self.x + x, row) != self.nearest_beacon
         }
 
+    def border_y_intercepts(self: Self) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+        """
+        Return y intercept values for the curves defining the sensor's borderless region.
 
-
-
-
-        # border = self.beaconless_border()
-        # on_line = sorted([point for point in border if point.y == row], key=lambda p: p.x)
-        # if len(on_line) == 1 and on_line == self.nearest_beacon:
-        #     return []
-        # if len(on_line) == 2:
-        #     left, right = on_line
-        #     if left == self.nearest_beacon:
-        #         # Shift right
-        #         on_line[0] = Point(left.x + 1, row)
-        #     elif right == self.nearest_beacon:
-        #         # Shift left
-        #         on_line[1] = Point(right.x - 1, row)
-
-        # return on_line
-
-    # def without_beacons(self: Self) -> Set[Point]:
-    #     """Find all points around a sensor with a distance less than or equal to the distance of the nearest beacon
-
-    #     Makes sure to not include the location of the beacon as well"""
-    #     beaconless = set()
-    #     beacon_distance = self.distance_from(self.nearest_beacon)
-    #     for x in range(beacon_distance + 1):
-    #         for y in range(beacon_distance + 1 - x):
-    #             neighbours = (
-    #                 Point(self.x + x, self.y + y),
-    #                 Point(self.x + x, self.y - y),
-    #                 Point(self.x - x, self.y + y),
-    #                 Point(self.x - x, self.y - y),
-    #             )
-    #             for point in neighbours:
-    #                 if point != self and point != self.nearest_beacon:
-    #                     beaconless.add(point)
-    #     return beaconless
+        The first tuple contains the upper and lower value of the negative gradient curves,
+        whilst the second contains the upper and lower value of the positive curves
+        """
+        beacon_distance = self.distance_from(self.nearest_beacon)
+        return (
+            (
+                self.y + self.x - beacon_distance,
+                self.y + self.x + beacon_distance
+            ),
+            (
+                self.y - self.x - beacon_distance,
+                self.y - self.x + beacon_distance
+            )
+        )
 
 
 def generate_arg_parser() -> argparse.ArgumentParser:
@@ -136,6 +123,41 @@ def parse_coordinates(raw: List[str]) -> List[Sensor]:
     return coordinates
 
 
+def find_missing_gap(intercepts: List[int]) -> int | None:
+    """Find gap coordinate based on y-intercept values of curves.
+
+    Following William Yeng's method (https://github.com/womogenes/AoC-2022-Solutions/blob/main/day_15/day_15_p2.py
+    and https://www.youtube.com/watch?v=w7m48_uCvWI), we find the point where the distace between two y intercepts
+    (corresponding to beaconless border lines) are exactly two apart.
+    Returns the min of the two plus one (the actual gap value).
+    """
+    for id_a, a in enumerate(intercepts):
+        for id_b, b in enumerate(intercepts[id_a+1:], start=id_a):
+            # print(f"Comparing {a} and {b}, (ids: {id_a}, {id_b} [{id_a // 2}, {id_b // 2}])")
+            if id_a // 2 == id_b // 2:
+                # print(f"Skipping {a} and {b} (ids: {id_a}, {id_b})")
+                continue  # Skip two curves from the same border
+            if abs(a - b) == 2:
+                return min(a, b) + 1
+    return None
+
+
+def find_gap_coordinates(pos: int, neg: int) -> Tuple[int, int]:
+    """Find the intercept coordinates based on given gradients
+
+    Using formulas `y - x = pos = (y_s - x_s)` and `y + x = neg = (y_s + x_s)`
+    we can find `x_s = (neg - pos) / 2` and `y_s = (neg + pos) / 2`
+    """
+    return (
+        (neg - pos) // 2,
+        (neg + pos) // 2
+    )
+
+
+def calculate_tuning_frequency(x: int, y: int) -> int:
+    return (4_000_000 * x) + y
+
+
 def main() -> None:
     parser = generate_arg_parser()
     args = parser.parse_args()
@@ -153,37 +175,30 @@ def main() -> None:
         )
         sys.exit(1)
     coordinates = parse_coordinates(raw_data)
-    intersect_row = [
-        sensor for sensor in coordinates
-        if abs(Y_VAL - sensor.y) < sensor.distance_from(sensor.nearest_beacon)
-    ]
-    print(f"{len(intersect_row)} intersect row {Y_VAL}")
-    beaconless_on_line = set()
-    for id, sensor in enumerate(intersect_row, 1):
-        print(f"calculating sensor {id}")
-        beaconless_on_line = beaconless_on_line.union(sensor.beaconless_on_line(Y_VAL))
-    print(f"{len(beaconless_on_line)} beaconless points.")
-    
+    # Part 1
+    # intersect_row = [
+    #     sensor for sensor in coordinates
+    #     if abs(Y_VAL - sensor.y) < sensor.distance_from(sensor.nearest_beacon)
+    # ]
+    # print(f"{len(intersect_row)} intersect row {Y_VAL}")
+    # beaconless_on_line = set()
+    # for id, sensor in enumerate(intersect_row, 1):
+    #     print(f"calculating sensor {id}")
+    #     beaconless_on_line = beaconless_on_line.union(sensor.beaconless_on_line(Y_VAL))
+    # print(f"{len(beaconless_on_line)} beaconless points.")
 
-    # beaconless = set()
-    # for sensor in coordinates:
-    #     beaconless = beaconless.union(sensor.beaconless_border())
-    # print(len(beaconless))
-    # exclude_sensors = [point for point in beaconless if point not in coordinates]
-    # print(len(exclude_sensors))
-    # print([point for point in exclude_sensors if point.y == 10])
-
-
-    # print(f"{sensor}, distance: {sensor.distance_from(sensor.nearest_beacon)}")
-    # print(sensor.beaconless_border())
-    # beaconless: Set[Point] = set()
-    # print(f"analysed 0/{len(coordinates)}", end='')
-    # for id, sensor in enumerate(coordinates, 1):
-    #     beaconless = beaconless.union(sensor.without_beacons())
-    #     print(f"\banalysed {id}/{len(coordinates)}", end='')
-    # exclude_sensors = [point for point in beaconless if point not in coordinates]
-    # fixed_y = [point for point in exclude_sensors if point.y == Y_VAL]
-    # print(f"Number of beaconless points in row y={Y_VAL} is {len(fixed_y)}")
+    # Part 2
+    positive_lines = list()
+    negative_lines = list()
+    for sensor in coordinates:
+        neg, pos = sensor.border_y_intercepts()
+        negative_lines.extend(neg)
+        positive_lines.extend(pos)
+    pos = find_missing_gap(positive_lines)
+    neg = find_missing_gap(negative_lines)
+    if pos is not None and neg is not None:
+        missing = find_gap_coordinates(pos, neg)
+        print(f"Tuning frequency: {calculate_tuning_frequency(*missing)}")
 
 
 if __name__ == "__main__":
